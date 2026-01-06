@@ -178,6 +178,36 @@ button:disabled {
     cursor: pointer;
 }
 
+#mai-fall {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 0;
+}
+
+.mai-item {
+    position: absolute;
+    top: -40px;
+    animation-name: mai-fall;
+    animation-timing-function: linear;
+}
+
+@keyframes mai-fall {
+    0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(110vh) rotate(360deg);
+        opacity: 0.9;
+    }
+}
+
+
 </style>
 </head>
 
@@ -210,6 +240,33 @@ button:disabled {
         <button id="closeModal">Đóng</button>
     </div>
 </div>
+
+<div id="mai-fall"></div>
+
+<script>
+const maiIcons = ["🌼", "🧧", "🎊"];
+
+function createMai() {
+    const mai = document.createElement("div");
+    mai.className = "mai-item";
+    mai.innerText = maiIcons[Math.floor(Math.random() * maiIcons.length)];
+
+    mai.style.left = Math.random() * 100 + "vw";
+    mai.style.fontSize = 18 + Math.random() * 14 + "px";
+    mai.style.animationDuration = 6 + Math.random() * 4 + "s";
+
+    document.getElementById("mai-fall").appendChild(mai);
+
+    setTimeout(() => {
+        mai.remove();
+    }, 10000);
+}
+
+// RƠI LIÊN TỤC
+setInterval(createMai, 500);
+</script>
+
+
 
 <script>
 /* ================= VÒNG QUAY ================= */
