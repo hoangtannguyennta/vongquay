@@ -10,29 +10,40 @@
 <style>
 body {
     margin: 0;
-    font-family: Arial, sans-serif;
-    background: linear-gradient(180deg, #c62828, #f9a825);
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: radial-gradient(circle at top, #ffeb3b, #c62828);
     color: #fff;
     text-align: center;
     overflow: hidden;
 }
 
+.app {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    box-sizing: border-box;
+}
+
 h1 {
-    margin-top: 20px;
-    font-size: 24px;
+    margin: 8px 0 4px;
+    font-size: clamp(20px, 5vw, 28px);
+    text-shadow: 0 2px 6px rgba(0,0,0,0.4);
 }
 
 .subtitle {
-    font-size: 14px;
-    opacity: 0.9;
+    font-size: clamp(13px, 3.5vw, 15px);
+    opacity: 0.95;
+    margin-bottom: 12px;
 }
 
 .wheel-wrapper {
     position: relative;
-    width: 300px;
-    height: 300px;
-    margin: 25px auto;
-    z-index: 2;
+    width: min(80vw, 320px);
+    height: min(80vw, 320px);
+    margin: 16px auto;
 }
 
 canvas#wheel {
@@ -40,78 +51,165 @@ canvas#wheel {
     height: 100%;
     border-radius: 50%;
     background: #fff;
-    box-shadow: 0 0 15px rgba(0,0,0,0.4);
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
     transition: transform 5s cubic-bezier(0.25, 0.1, 0.25, 1);
 }
 
 .pointer {
     position: absolute;
-    top: -10px;
+    top: -14px;
     left: 50%;
     transform: translateX(-50%);
     width: 0;
     height: 0;
-    border-left: 14px solid transparent;
-    border-right: 14px solid transparent;
-    border-bottom: 28px solid #ffd700;
+    border-left: 16px solid transparent;
+    border-right: 16px solid transparent;
+    border-bottom: 32px solid #ffd700;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
     z-index: 10;
 }
 
 button {
-    background: #ffd700;
+    margin-top: 12px;
+    background: linear-gradient(180deg, #fff176, #fbc02d);
     color: #b71c1c;
-    font-size: 18px;
+    font-size: clamp(16px, 4.5vw, 18px);
     font-weight: bold;
     border: none;
-    border-radius: 30px;
-    padding: 12px 35px;
+    border-radius: 999px;
+    padding: 14px 42px;
     cursor: pointer;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-    z-index: 2;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.35);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+button:active {
+    transform: scale(0.95);
+    box-shadow: 0 3px 6px rgba(0,0,0,0.4);
 }
 
 button:disabled {
     background: #ccc;
+    color: #666;
     cursor: not-allowed;
 }
 
 .footer {
-    margin-top: 15px;
-    font-size: 12px;
-    opacity: 0.85;
-    z-index: 2;
+    margin-top: 14px;
+    font-size: clamp(11px, 3vw, 13px);
+    opacity: 0.9;
 }
 
-/* canvas pháo bông */
+/* Canvas pháo bông */
 #fireworks {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    inset: 0;
     pointer-events: none;
     z-index: 1;
 }
+
+/* 📱 Mobile tối ưu thêm */
+@media (max-height: 650px) {
+    .wheel-wrapper {
+        width: min(70vw, 260px);
+        height: min(70vw, 260px);
+    }
+}
+
+/* ===== POPUP KẾT QUẢ ===== */
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 20;
+}
+
+.modal.show {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.modal-content {
+    background: linear-gradient(180deg, #fff8e1, #ffe082);
+    color: #b71c1c;
+    border-radius: 20px;
+    padding: 22px 20px 26px;
+    width: min(90vw, 320px);
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+    animation: pop 0.35s ease;
+}
+
+@keyframes pop {
+    from { transform: scale(0.7); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+.modal-icon {
+    font-size: 42px;
+    margin-bottom: 6px;
+}
+
+.modal-title {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.modal-text {
+    font-size: 16px;
+    margin-bottom: 18px;
+}
+
+.modal-content button {
+    background: linear-gradient(180deg, #ffd54f, #fbc02d);
+    color: #b71c1c;
+    border: none;
+    border-radius: 999px;
+    padding: 10px 30px;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
 </style>
 </head>
 
 <body>
 
-<h1>🎊 TRI ÂN KHÁCH HÀNG 🎊</h1>
-<div class="subtitle">Quay vòng may mắn – Nhận quà liền tay</div>
 
-<div class="wheel-wrapper">
-    <div class="pointer"></div>
-    <canvas id="wheel" width="300" height="300"></canvas>
-</div>
+<div class="app">
+    <h1>🎊 TRI ÂN KHÁCH HÀNG 🎊</h1>
+    <div class="subtitle">Quay vòng may mắn – Nhận quà liền tay</div>
 
-<button id="spin">🎁 QUAY NGAY</button>
+    <div class="wheel-wrapper">
+        <div class="pointer"></div>
+        <canvas id="wheel" width="300" height="300"></canvas>
+    </div>
 
-<div class="footer">
-    Chúc Quý Khách Năm Mới An Khang – Phát Tài 🎆
+    <button id="spin">🎁 QUAY NGAY</button>
+
+    <div class="footer">
+        Chúc Quý Khách Năm Mới An Khang – Phát Tài 🎆
+    </div>
 </div>
 
 <canvas id="fireworks"></canvas>
+
+<div id="resultModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-icon">🎉</div>
+        <div class="modal-title">Chúc mừng Quý Khách!</div>
+        <div class="modal-text" id="resultText"></div>
+        <button id="closeModal">Đóng</button>
+    </div>
+</div>
 
 <script>
 /* ================= VÒNG QUAY ================= */
@@ -119,12 +217,12 @@ const wheel = document.getElementById("wheel");
 const ctx = wheel.getContext("2d");
 
 const prizes = [
-    "💰 Lì xì 500K",
+    "🧧 Lì xì 500.000đ",
     "🎁 Quà tri ân",
     "🥤 Thùng Pepsi",
-    "🍊 Lì xì may mắn",
-    "🎁 Quà tri ân",
-    "🍊 Lì xì may mắn"
+    "🧧 Lì xì may mắn",
+    "🎀 Quà tri ân",
+    "🍀 Chúc may mắn"
 ];
 
 const colors = [
@@ -154,12 +252,13 @@ function drawWheel() {
         ctx.rotate(arc * i + arc / 2);
         ctx.textAlign = "right";
         ctx.fillStyle = "#fff";
-        ctx.font = "bold 14px Arial";
+        ctx.font = "bold 12px 'Trebuchet MS', Arial, sans-serif";
         ctx.fillText(prizes[i], 140, 5);
         ctx.restore();
     }
 }
 drawWheel();
+
 
 /* ================= PHÁO BÔNG ================= */
 const fwCanvas = document.getElementById("fireworks");
@@ -209,33 +308,42 @@ function animateFireworks() {
 }
 
 /* ================= QUAY ================= */
+
+
 $("#spin").click(function () {
     if (spinning) return;
-
-    // if (localStorage.getItem("da_quay")) {
-    //     alert("🎉 Quý khách đã quay rồi. Xin cảm ơn!");
-    //     return;
-    // }
 
     spinning = true;
     $("#spin").prop("disabled", true);
 
     const index = Math.floor(Math.random() * total);
-    const rotateDeg = 360 * 6 + (360 / total) * index;
-    rotation += rotateDeg;
+    const offset = -90;
 
-    wheel.style.transform = `rotate(${rotation}deg)`;
+    const rotateDeg = 360 * 6 + offset - (360 / total) * (index + 0.5);
+
+    wheel.style.transition = "none";
+    wheel.style.transform = "rotate(0deg)";
 
     setTimeout(() => {
-        // PHÁO BÔNG
+        wheel.style.transition = "transform 5s cubic-bezier(0.25, 0.1, 0.25, 1)";
+        wheel.style.transform = `rotate(${rotateDeg}deg)`;
+    }, 50);
+
+    setTimeout(() => {
         for (let i = 0; i < 6; i++) createFirework();
         animateFireworks();
 
-        alert("🎊 Chúc mừng! Bạn trúng: " + prizes[index]);
-        // localStorage.setItem("da_quay", "true");
+        $("#resultText").text(prizes[index]);
+        $("#resultModal").addClass("show");
+
         spinning = false;
         $("#spin").prop("disabled", false);
-    }, 5000);
+    }, 5050);
+});
+
+
+$("#closeModal").click(function () {
+    $("#resultModal").removeClass("show");
 });
 </script>
 
