@@ -14,6 +14,7 @@ body {
     background: linear-gradient(180deg, #c62828, #f9a825);
     color: #fff;
     text-align: center;
+    overflow: hidden;
 }
 
 h1 {
@@ -31,9 +32,10 @@ h1 {
     width: 300px;
     height: 300px;
     margin: 25px auto;
+    z-index: 2;
 }
 
-canvas {
+canvas#wheel {
     width: 100%;
     height: 100%;
     border-radius: 50%;
@@ -65,6 +67,7 @@ button {
     padding: 12px 35px;
     cursor: pointer;
     box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    z-index: 2;
 }
 
 button:disabled {
@@ -73,9 +76,21 @@ button:disabled {
 }
 
 .footer {
-    margin-top: 20px;
+    margin-top: 15px;
     font-size: 12px;
     opacity: 0.85;
+    z-index: 2;
+}
+
+/* canvas pháo bông */
+#fireworks {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
 }
 </style>
 </head>
@@ -93,12 +108,15 @@ button:disabled {
 <button id="spin">🎁 QUAY NGAY</button>
 
 <div class="footer">
-    Chúc Quý Khách Năm Mới An Khang – Phát Tài 🎉
+    Chúc Quý Khách Năm Mới An Khang – Phát Tài 🎆
 </div>
 
+<canvas id="fireworks"></canvas>
+
 <script>
-const canvas = document.getElementById("wheel");
-const ctx = canvas.getContext("2d");
+/* ================= VÒNG QUAY ================= */
+const wheel = document.getElementById("wheel");
+const ctx = wheel.getContext("2d");
 
 const prizes = [
     "💰 Lì xì 500K",
@@ -123,7 +141,6 @@ const arc = 2 * Math.PI / total;
 let rotation = 0;
 let spinning = false;
 
-// Vẽ vòng quay
 function drawWheel() {
     for (let i = 0; i < total; i++) {
         ctx.beginPath();
@@ -142,9 +159,56 @@ function drawWheel() {
         ctx.restore();
     }
 }
-
 drawWheel();
 
+/* ================= PHÁO BÔNG ================= */
+const fwCanvas = document.getElementById("fireworks");
+const fwCtx = fwCanvas.getContext("2d");
+fwCanvas.width = window.innerWidth;
+fwCanvas.height = window.innerHeight;
+
+let fireworks = [];
+
+function createFirework() {
+    const x = Math.random() * fwCanvas.width;
+    const y = Math.random() * fwCanvas.height / 2;
+    const colors = ["#ff5252", "#ffd740", "#69f0ae", "#40c4ff"];
+    for (let i = 0; i < 40; i++) {
+        fireworks.push({
+            x,
+            y,
+            angle: Math.random() * 2 * Math.PI,
+            speed: Math.random() * 5 + 2,
+            radius: Math.random() * 3 + 1,
+            alpha: 1,
+            color: colors[Math.floor(Math.random() * colors.length)]
+        });
+    }
+}
+
+function animateFireworks() {
+    fwCtx.clearRect(0, 0, fwCanvas.width, fwCanvas.height);
+    fireworks.forEach((p, i) => {
+        p.x += Math.cos(p.angle) * p.speed;
+        p.y += Math.sin(p.angle) * p.speed;
+        p.alpha -= 0.02;
+
+        fwCtx.globalAlpha = p.alpha;
+        fwCtx.beginPath();
+        fwCtx.fillStyle = p.color;
+        fwCtx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        fwCtx.fill();
+
+        if (p.alpha <= 0) fireworks.splice(i, 1);
+    });
+    fwCtx.globalAlpha = 1;
+
+    if (fireworks.length > 0) {
+        requestAnimationFrame(animateFireworks);
+    }
+}
+
+/* ================= QUAY ================= */
 $("#spin").click(function () {
     if (spinning) return;
 
@@ -160,9 +224,13 @@ $("#spin").click(function () {
     const rotateDeg = 360 * 6 + (360 / total) * index;
     rotation += rotateDeg;
 
-    canvas.style.transform = `rotate(${rotation}deg)`;
+    wheel.style.transform = `rotate(${rotation}deg)`;
 
     setTimeout(() => {
+        // PHÁO BÔNG
+        for (let i = 0; i < 6; i++) createFirework();
+        animateFireworks();
+
         alert("🎊 Chúc mừng! Bạn trúng: " + prizes[index]);
         // localStorage.setItem("da_quay", "true");
         spinning = false;
