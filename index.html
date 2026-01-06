@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Vòng quay trúng thưởng</title>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+<style>
+body {
+    background: #f4f6f8;
+    font-family: Arial, sans-serif;
+    text-align: center;
+}
+
+h2 {
+    margin-top: 30px;
+}
+
+.wheel-wrapper {
+    position: relative;
+    width: 320px;
+    height: 320px;
+    margin: 30px auto;
+}
+
+#wheel {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 8px solid #fff;
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    transition: transform 5s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+/* Kim chỉ */
+.pointer {
+    position: absolute;
+    top: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 12px solid transparent;
+    border-right: 12px solid transparent;
+    border-bottom: 25px solid red;
+    z-index: 10;
+}
+
+#spin {
+    padding: 12px 30px;
+    font-size: 18px;
+    background: #ff5722;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+#spin:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+</style>
+</head>
+
+<body>
+
+<h2>🎁 Vòng Quay Trúng Thưởng 🎁</h2>
+
+<div class="wheel-wrapper">
+    <div class="pointer"></div>
+    <canvas id="wheel" width="300" height="300"></canvas>
+</div>
+
+<button id="spin">QUAY NGAY</button>
+
+<script>
+const canvas = document.getElementById("wheel");
+const ctx = canvas.getContext("2d");
+
+const prizes = [
+    "100K",
+    "200K",
+    "300K",
+    "500K",
+    "1 TRIỆU",
+    "CHÚC MAY MẮN"
+];
+
+const colors = [
+    "#FFCDD2",
+    "#F8BBD0",
+    "#E1BEE7",
+    "#BBDEFB",
+    "#C8E6C9",
+    "#FFF9C4"
+];
+
+const total = prizes.length;
+const arc = 2 * Math.PI / total;
+let rotation = 0;
+let spinning = false;
+
+// Vẽ vòng quay
+function drawWheel() {
+    for (let i = 0; i < total; i++) {
+        ctx.beginPath();
+        ctx.fillStyle = colors[i];
+        ctx.moveTo(150, 150);
+        ctx.arc(150, 150, 150, arc * i, arc * (i + 1));
+        ctx.fill();
+
+        ctx.save();
+        ctx.translate(150, 150);
+        ctx.rotate(arc * i + arc / 2);
+        ctx.textAlign = "right";
+        ctx.fillStyle = "#333";
+        ctx.font = "bold 14px Arial";
+        ctx.fillText(prizes[i], 140, 5);
+        ctx.restore();
+    }
+}
+
+drawWheel();
+
+$("#spin").click(function () {
+    if (spinning) return;
+    spinning = true;
+    $("#spin").prop("disabled", true);
+
+    // Random kết quả
+    const index = Math.floor(Math.random() * total);
+
+    // Quay 6 vòng + vị trí trúng
+    const rotateDeg = 360 * 6 + (360 / total) * index;
+    rotation += rotateDeg;
+
+    canvas.style.transform = `rotate(${rotation}deg)`;
+
+    setTimeout(() => {
+        alert("🎉 Bạn trúng: " + prizes[index]);
+        spinning = false;
+        $("#spin").prop("disabled", false);
+    }, 5000);
+});
+</script>
+
+</body>
+</html>
