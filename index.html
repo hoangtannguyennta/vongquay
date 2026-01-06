@@ -234,6 +234,7 @@ $("#spin").click(function () {
         alert("🎊 Chúc mừng! Bạn trúng: " + prizes[index]);
         // localStorage.setItem("da_quay", "true");
         spinning = false;
+        $("#spin").prop("disabled", false);
     }, 5000);
 });
 </script>
